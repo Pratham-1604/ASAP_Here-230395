@@ -106,7 +106,9 @@ class WSearchBar extends StatelessWidget {
                               _routingExample!.addWaypoint(
                                   Waypoint(state.searchResult[index]['geo']));
                               debugPrint("${_routingExample!.waypoints.length}");
+                              mapController.routingExample = _routingExample;
                               _routingExample!.addRoute();
+
                               mapController
                                   .flyTo(state.searchResult[index]['geo']);
                             },

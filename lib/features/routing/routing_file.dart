@@ -1,10 +1,11 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:here_final/navigation/positioning_controller.dart';
 import 'package:here_sdk/animation.dart';
 import 'package:here_sdk/core.dart';
 import 'package:here_sdk/core.errors.dart';
+import 'package:here_sdk/location.dart';
 import 'package:here_sdk/mapview.dart';
+import 'package:here_sdk/navigation.dart';
 import 'package:here_sdk/routing.dart';
 import 'package:here_sdk/routing.dart' as here;
 import 'package:intl/intl.dart';
@@ -18,6 +19,9 @@ class RoutingExample {
   late RoutingEngine _routingEngine;
   List<Waypoint> waypoints = [];
   List<MapMarker> mapMarkers = [];
+
+  // for refresh route
+  here.Route? route;
 
   RoutingExample(
     // ShowDialogFunction showDialogCallback,
@@ -41,6 +45,28 @@ class RoutingExample {
     }
   }
 
+  RefreshRouteOptions refreshRouteOptions =
+      RefreshRouteOptions.withCarOptions(CarOptions());
+
+  void updateRoute(Waypoint w) {
+    if (route == null) {
+      return;
+    } else {
+      _routingEngine.refreshRoute(
+          route?.routeHandle as RouteHandle, w, refreshRouteOptions,
+          (routingError, routes) {
+        if (routingError == null) {
+          // HERE.Route newRoute = routes.first;
+          here.Route newRoute = routes!.first;
+          // _hereMapController.mapScene.removeMapPolyline(_mapPolylines.first);
+          // ...
+        } else {
+          // Handle error.
+        }
+      });
+    }
+  }
+
   void addWaypoint(Waypoint a) {
     waypoints.add(a);
     return;
@@ -59,24 +85,81 @@ class RoutingExample {
   Future<void> addRoute() async {
     CarOptions carOptions = CarOptions();
     carOptions.routeOptions.enableTolls = true;
+    carOptions.routeOptions.enableRouteHandle = true;
     debugPrint(waypoints.length.toString());
     _routingEngine.calculateCarRoute(waypoints, carOptions,
         (RoutingError? routingError, List<here.Route>? routeList) async {
       if (routingError == null) {
         // When error is null, then the list guaranteed to be not null.
-        here.Route route = routeList!.first;
-        _showRouteDetails(route);
-        _showRouteOnMap(route);
+        // here.Route route = routeList!.first;
+        route = routeList!.first;
+        _showRouteDetails(route!);
+        _showRouteOnMap(route!);
         // _logRouteSectionDetails(route);
-        _logRouteViolations(route);
-        _logTollDetails(route);
-        _animateToRoute(route);
+        _logRouteViolations(route!);
+        _logTollDetails(route!);
+        _animateToRoute(route!);
       } else {
         var error = routingError.toString();
         // _showDialog('Error', 'Error while calculating a route: $error');
       }
     });
   }
+
+  // navigation
+
+  late VisualNavigator _visualNavigator;
+
+  startGuidance(here.Route route) {
+    try {
+      // Without a route set, this starts tracking mode.
+      _visualNavigator = VisualNavigator();
+    } on InstantiationException {
+      throw Exception("Initialization of VisualNavigator failed.");
+    }
+
+    // This enables a navigation view including a rendered navigation arrow.
+    _visualNavigator!.startRendering(_hereMapController!);
+
+    // Hook in one of the many listeners. Here we set up a listener to get instructions on the maneuvers to take while driving.
+    // For more details, please check the "navigation_app" example and the Developer's Guide.
+    _visualNavigator!.maneuverNotificationListener =
+        ManeuverNotificationListener((String maneuverText) {
+      print("ManeuverNotifications: $maneuverText");
+    });
+
+    // Set a route to follow. This leaves tracking mode.
+    _visualNavigator!.route = route;
+
+    // VisualNavigator acts as LocationListener to receive location updates directly from a location provider.
+    // Any progress along the route is a result of getting a new location fed into the VisualNavigator.
+    _setupLocationSource(_visualNavigator!, route);
+  }
+
+  late LocationSimulator _locationSimulator;
+  HEREPositioningProvider? _herePositioningProvider;
+  _setupLocationSource(LocationListener locationListener, here.Route route) {
+    try {
+      // Provides fake GPS signals based on the route geometry.
+      _herePositioningProvider = HEREPositioningProvider();
+      _herePositioningProvider?.startLocating(
+          _visualNavigator, LocationAccuracy.navigation);
+    } on InstantiationException {
+      throw Exception("Initialization of LocationSimulator failed.");
+    }
+
+    // _locationSimulator!.listener = locationListener;
+    // _locationSimulator!.start();
+  }
+
+  stopLocationSimulator() {
+    if (_visualNavigator != null) {
+      _herePositioningProvider?.stop();
+      _visualNavigator.stopRendering();
+    }
+  }
+
+  // navigation ends
 
   // A route may contain several warnings, for example, when a certain route option could not be fulfilled.
   // An implementation may decide to reject a route if one or more violations are detected.

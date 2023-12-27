@@ -3,10 +3,13 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:here_final/features/routing/routing_file.dart';
 import 'package:here_sdk/core.dart';
 import 'package:here_sdk/mapview.dart';
 import 'package:here_sdk/routing.dart';
+// import 'package:here_sdk/routing.dart';
 import 'package:here_sdk/search.dart';
+import 'package:here_sdk/routing.dart' as here;
 
 class MapController extends ChangeNotifier {
   // map stuff only
@@ -36,6 +39,30 @@ class MapController extends ChangeNotifier {
   final sheet_controller = DraggableScrollableController();
 
   // bottom sheet stuff only -ends
+
+  // routing stuff only
+
+  RoutingExample? routingExample;
+  bool isRouting = false;
+
+  set routerExamplee(RoutingExample? value) {
+    routingExample = value;
+  }
+
+  void toggleRouting() {
+    if (!isRouting && routingExample != null && routingExample?.route != null) {
+      routingExample?.startGuidance(routingExample?.route as here.Route);
+    } else if (isRouting &&
+        routingExample != null &&
+        routingExample?.route != null) {
+      routingExample?.stopLocationSimulator();
+    }
+    isRouting = !isRouting;
+
+    notifyListeners();
+  }
+
+  // routing stuff only -ends
 
   // search controls
 
@@ -181,6 +208,12 @@ class MapController extends ChangeNotifier {
       if (isAnimated && hereMapController != null) {
         flyTo(GeoCoordinates(position.latitude, position.longitude));
       }
+      // if (isRouting) {
+      //   debugPrint("tedrouting ${routingExample?.waypoints.length}");
+      //   routingExample?.updateWayPoint(
+      //       Waypoint(GeoCoordinates(position.latitude, position.longitude)));
+      //   routingExample?.addRoute();
+      // }
     });
   }
 

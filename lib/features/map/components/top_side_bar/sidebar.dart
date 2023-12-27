@@ -49,9 +49,13 @@ class TopSection extends StatelessWidget {
                                 color: (mapController.isAnimated) ? Colors.red : Colors.blue, size: 20)),
                       ),
                       InkWell(
-                        onTap: () => {mapController.sheet_controller.animateTo(1, duration: const Duration(milliseconds: 200), curve: Curves.easeInSine)},
+                        onTap: () => {
+                          // mapController.sheet_controller.animateTo(1, duration: const Duration(milliseconds: 200), curve: Curves.easeInSine)
+                          // mapController.isRouting = true,
+                          mapController.toggleRouting()
+                          },
                         child: Icon(Icons.directions,
-                            color: Theme.of(context).primaryColor, size: 20),
+                            color: (mapController.isRouting) ? Colors.teal : Colors.orange, size: 20),
                       ),
                     ],
                   ),
