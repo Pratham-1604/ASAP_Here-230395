@@ -17,17 +17,25 @@ class CHereMap extends StatefulWidget {
 }
 
 class _CHereMapState extends State<CHereMap> {
-  GeoCoordinates _currentPosition = GeoCoordinates(18.516726, 73.856255);
+
+  GeoCoordinates _currentPosition = GeoCoordinates(18.516726,73.856255);
   HereMapController? hereMapController;
   MapController mapController = MapController();
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // context.read(mapProvider).getPermisson();
-      mapController.determinePosition().then((value) => setState(() {
-            _currentPosition = value;
-          }));
+      mapController.getPermisson().then((value) => setState(() {
+        _currentPosition = value;
+        // print("Current Position: ${_currentPosition.latitude}, ${_currentPosition.longitude}");
+        if (hereMapController != null) {
+          hereMapController!.camera.lookAtPoint(
+            GeoCoordinates(_currentPosition.latitude, _currentPosition.longitude));
+        }
+      }));
+      
     });
   }
 
@@ -38,7 +46,7 @@ class _CHereMapState extends State<CHereMap> {
         controller.camera.lookAtPoint(GeoCoordinates(
             _currentPosition.latitude, _currentPosition.longitude));
       } else {
-        debugPrint("Map scene not loaded. MapError: $error");
+        // print("Map scene not loaded. MapError: " + error.toString());
       }
     });
     hereMapController = controller;
@@ -46,8 +54,12 @@ class _CHereMapState extends State<CHereMap> {
 
   @override
   Widget build(BuildContext context) {
-    return HereMap(
-      onMapCreated: _onMapCreated,
+    return Stack(
+      children: [
+        HereMap(
+          onMapCreated: _onMapCreated,
+        ),
+      ],
     );
   }
 }

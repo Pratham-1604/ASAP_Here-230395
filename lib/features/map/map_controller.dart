@@ -1,10 +1,9 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:here_sdk/core.dart';
 
 class MapController extends ChangeNotifier {
-  Future<GeoCoordinates> determinePosition() async {
+  Future<GeoCoordinates> getPermisson() async {
     bool serviceEnabled;
     LocationPermission permission;
 
