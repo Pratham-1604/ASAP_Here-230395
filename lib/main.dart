@@ -42,7 +42,10 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const CHereMap(),
+      home: const Scaffold(
+        
+        resizeToAvoidBottomInset: false,
+        body: CHereMap()),
     );
   }
 }
