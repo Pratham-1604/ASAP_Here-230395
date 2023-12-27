@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:here_final/features/map/map_controller.dart';
 import 'package:here_sdk/core.dart';
 import 'package:here_sdk/mapview.dart';
+import 'package:here_sdk/routing.dart';
 import '../routing/routing_file.dart';
 
 final mapProvider = ChangeNotifierProvider<MapController>((ref) {
@@ -53,7 +54,22 @@ class _CHereMapState extends State<CHereMap> {
     hereMapController = controller;
   }
 
-  void _addRouteButtonClicked() {
+  void _addRouteButtonClicked(){
+    _routingExample?.addWaypoint(
+      Waypoint(
+        GeoCoordinates(18.3663,73.7559),
+      ),
+    );
+    _routingExample?.addWaypoint(
+      Waypoint(
+        GeoCoordinates(18.4454, 73.7801),
+      ),
+    );
+    _routingExample?.addWaypoint(
+      Waypoint(
+        GeoCoordinates(18.6783, 73.8950),
+      ),
+    );
     _routingExample?.addRoute();
   }
 
@@ -111,12 +127,19 @@ class _CHereMapState extends State<CHereMap> {
         HereMap(
           onMapCreated: _onMapCreated,
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            button('Add Route', _addRouteButtonClicked),
-            button('Clear Map', _clearMapButtonClicked),
-          ],
+        Positioned(
+          bottom: 50,
+          left: 20,
+          child: Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                button('Add Route', _addRouteButtonClicked),
+                button('Clear Map', _clearMapButtonClicked),
+              ],
+            ),
+          ),
         ),
       ],
     );

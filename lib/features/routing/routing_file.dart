@@ -17,14 +17,23 @@ class RoutingExample {
   List<MapPolyline> _mapPolylines = [];
   late RoutingEngine _routingEngine;
   final ShowDialogFunction _showDialog;
-  final _BERLIN_HQ_GEO_COORDINATES = GeoCoordinates(52.530971, 13.385088);
+  List<Waypoint> waypoints = [];
 
-  RoutingExample(ShowDialogFunction showDialogCallback, HereMapController hereMapController)
-      : _showDialog = showDialogCallback,
+  RoutingExample(
+    ShowDialogFunction showDialogCallback,
+    HereMapController hereMapController,
+  )   : _showDialog = showDialogCallback,
         _hereMapController = hereMapController {
     double distanceToEarthInMeters = 10000;
-    MapMeasure mapMeasureZoom = MapMeasure(MapMeasureKind.distance, distanceToEarthInMeters);
-    _hereMapController.camera.lookAtPointWithMeasure(GeoCoordinates(52.520798, 13.409408), mapMeasureZoom);
+    MapMeasure mapMeasureZoom = MapMeasure(
+      MapMeasureKind.distance,
+      distanceToEarthInMeters,
+    );
+
+    _hereMapController.camera.lookAtPointWithMeasure(
+      GeoCoordinates(52.520798, 13.409408),
+      mapMeasureZoom,
+    );
 
     try {
       _routingEngine = RoutingEngine();
@@ -33,17 +42,25 @@ class RoutingExample {
     }
   }
 
+  void addWaypoint(Waypoint a) {
+    waypoints.add(a);
+    return;
+  }
+
+  void removeWayPoint(int index) {
+    waypoints.removeAt(index);
+    return;
+  }
+
+  void updateWayPoint(Waypoint w) {
+    waypoints[0] = w;
+    return;
+  }
+
   Future<void> addRoute() async {
-    var startGeoCoordinates = _BERLIN_HQ_GEO_COORDINATES;
-    var destinationGeoCoordinates = _createRandomGeoCoordinatesInViewport();
-    var startWaypoint = Waypoint.withDefaults(startGeoCoordinates);
-    var destinationWaypoint = Waypoint.withDefaults(destinationGeoCoordinates);
-
-    List<Waypoint> waypoints = [startWaypoint, destinationWaypoint];
-
     CarOptions carOptions = CarOptions();
     carOptions.routeOptions.enableTolls = true;
-
+    debugPrint(waypoints.length.toString());
     _routingEngine.calculateCarRoute(waypoints, carOptions,
         (RoutingError? routingError, List<here.Route>? routeList) async {
       if (routingError == null) {
@@ -84,7 +101,8 @@ class RoutingExample {
       for (Toll toll in tolls) {
         debugPrint("Toll information valid for this list of spans:");
         debugPrint("Toll system: ${toll.tollSystem}");
-        debugPrint("Toll country code (ISO-3166-1 alpha-3): ${toll.countryCode}");
+        debugPrint(
+            "Toll country code (ISO-3166-1 alpha-3): ${toll.countryCode}");
         debugPrint("Toll fare information: ");
         for (TollFare tollFare in toll.fares) {
           // A list of possible toll fares which may depend on time of day, payment method and
@@ -92,7 +110,8 @@ class RoutingExample {
           // authorities.
           debugPrint("Toll price: ${tollFare.price} ${tollFare.currency}");
           for (PaymentMethod paymentMethod in tollFare.paymentMethods) {
-            debugPrint("Accepted payment methods for this price: $paymentMethod");
+            debugPrint(
+                "Accepted payment methods for this price: $paymentMethod");
           }
         }
       }
@@ -113,11 +132,17 @@ class RoutingExample {
       Section section = route.sections.elementAt(i);
 
       print("Route Section : ${i + 1}");
-      print("Route Section Departure Time : ${dateFormat.format(section.departureLocationTime!.localTime)}");
-      print("Route Section Arrival Time : ${dateFormat.format(section.arrivalLocationTime!.localTime)}");
+      print(
+          "Route Section Departure Time : ${dateFormat.format(section.departureLocationTime!.localTime)}");
+      print(
+          "Route Section Arrival Time : ${dateFormat.format(section.arrivalLocationTime!.localTime)}");
       print("Route Section length : ${section.lengthInMeters} m");
       print("Route Section duration : ${section.duration.inSeconds} s");
     }
+  }
+
+  void _showAavatars (){
+    // _hereMapController.
   }
 
   void _showRouteDetails(here.Route route) {
@@ -126,7 +151,8 @@ class RoutingExample {
     int estimatedTrafficDelayInSeconds = route.trafficDelay.inSeconds;
     int lengthInMeters = route.lengthInMeters;
 
-    String routeDetails = 'Travel Time: ${_formatTime(estimatedTravelTimeInSeconds)}, Traffic Delay: ${_formatTime(estimatedTrafficDelayInSeconds)}, Length: ${_formatLength(lengthInMeters)}';
+    String routeDetails =
+        'Travel Time: ${_formatTime(estimatedTravelTimeInSeconds)}, Traffic Delay: ${_formatTime(estimatedTrafficDelayInSeconds)}, Length: ${_formatLength(lengthInMeters)}';
 
     _showDialog('Route Details', routeDetails);
   }
@@ -135,7 +161,7 @@ class RoutingExample {
     int hours = sec ~/ 3600;
     int minutes = (sec % 3600) ~/ 60;
 
-    return '$hours:$minutes min';
+    return '${hours}h ${minutes}m';
   }
 
   String _formatLength(int meters) {
@@ -149,13 +175,14 @@ class RoutingExample {
     // Show route as polyline.
     GeoPolyline routeGeoPolyline = route.geometry;
     double widthInPixels = 20;
-    Color polylineColor = const Color.fromARGB(160, 0, 144, 138);
+    Color polylineColor = Color.fromARGB(244, 241, 5, 5);
     MapPolyline routeMapPolyline;
     try {
       routeMapPolyline = MapPolyline.withRepresentation(
           routeGeoPolyline,
           MapPolylineSolidRepresentation(
-              MapMeasureDependentRenderSize.withSingleSize(RenderSizeUnit.pixels, widthInPixels),
+              MapMeasureDependentRenderSize.withSingleSize(
+                  RenderSizeUnit.pixels, widthInPixels),
               polylineColor,
               LineCap.round));
       _hereMapController.mapScene.addMapPolyline(routeMapPolyline);
@@ -193,7 +220,8 @@ class RoutingExample {
           trafficSpanMapPolyline = new MapPolyline.withRepresentation(
               span.geometry,
               MapPolylineSolidRepresentation(
-                  MapMeasureDependentRenderSize.withSingleSize(RenderSizeUnit.pixels, widthInPixels),
+                  MapMeasureDependentRenderSize.withSingleSize(
+                      RenderSizeUnit.pixels, widthInPixels),
                   lineColor,
                   LineCap.round));
           _hereMapController.mapScene.addMapPolyline(trafficSpanMapPolyline);
@@ -215,6 +243,7 @@ class RoutingExample {
   // 8 <= jamFactor < 10: Severe traffic.
   // jamFactor = 10: No traffic, ie. the road is blocked.
   // Returns null in case of no or light traffic.
+
   Color? _getTrafficColor(double? jamFactor) {
     if (jamFactor == null || jamFactor < 4) {
       return null;
@@ -226,47 +255,25 @@ class RoutingExample {
     return Color.fromARGB(160, 0, 0, 0); // Black
   }
 
-  GeoCoordinates _createRandomGeoCoordinatesInViewport() {
-    GeoBox? geoBox = _hereMapController.camera.boundingBox;
-    if (geoBox == null) {
-      // Happens only when map is not fully covering the viewport as the map is tilted.
-      print("The map view is tilted, falling back to fixed destination coordinate.");
-      return GeoCoordinates(52.520798, 13.409408);
-    }
-
-    GeoCoordinates northEast = geoBox.northEastCorner;
-    GeoCoordinates southWest = geoBox.southWestCorner;
-
-    double minLat = southWest.latitude;
-    double maxLat = northEast.latitude;
-    double lat = _getRandom(minLat, maxLat);
-
-    double minLon = southWest.longitude;
-    double maxLon = northEast.longitude;
-    double lon = _getRandom(minLon, maxLon);
-
-    return GeoCoordinates(lat, lon);
-  }
-
-  double _getRandom(double min, double max) {
-    return min + Random().nextDouble() * (max - min);
-  }
-
   void _animateToRoute(here.Route route) {
     // The animation results in an untilted and unrotated map.
     double bearing = 0;
     double tilt = 0;
     // We want to show the route fitting in the map view with an additional padding of 50 pixels.
     Point2D origin = Point2D(50, 50);
-    Size2D sizeInPixels =
-        Size2D(_hereMapController.viewportSize.width - 100, _hereMapController.viewportSize.height - 100);
+    Size2D sizeInPixels = Size2D(_hereMapController.viewportSize.width - 100,
+        _hereMapController.viewportSize.height - 100);
     Rectangle2D mapViewport = Rectangle2D(origin, sizeInPixels);
 
     // Animate to the route within a duration of 3 seconds.
-    MapCameraUpdate update = MapCameraUpdateFactory.lookAtAreaWithGeoOrientationAndViewRectangle(
-        route.boundingBox, GeoOrientationUpdate(bearing, tilt), mapViewport);
-    MapCameraAnimation animation = MapCameraAnimationFactory.createAnimationFromUpdate(
-        update, const Duration(milliseconds: 3000), EasingFunction.inCirc);
+    MapCameraUpdate update =
+        MapCameraUpdateFactory.lookAtAreaWithGeoOrientationAndViewRectangle(
+            route.boundingBox,
+            GeoOrientationUpdate(bearing, tilt),
+            mapViewport);
+    MapCameraAnimation animation =
+        MapCameraAnimationFactory.createAnimationFromUpdate(
+            update, const Duration(milliseconds: 3000), EasingFunction.inCirc);
     _hereMapController.camera.startAnimation(animation);
   }
 }
