@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:here_final/features/map/hcmap.dart';
 import 'package:here_final/features/routing/routing_file.dart';
+import 'package:here_final/features/searching/explorerow.dart';
+import 'package:here_final/features/searching/rowwidgets.dart';
 import 'package:here_sdk/core.dart';
 import 'package:here_sdk/routing.dart';
 
@@ -86,8 +88,8 @@ class WSearchBar extends StatelessWidget {
                         ),
                       )
                     : ListView.builder(
-                      padding: const EdgeInsets.all(8),
-                      // shrinkWrap: true,
+                        padding: const EdgeInsets.all(8),
+                        // shrinkWrap: true,
                         itemCount: state.searchResult.length,
                         itemBuilder: (context, index) {
                           return ListTile(
@@ -105,7 +107,8 @@ class WSearchBar extends StatelessWidget {
                               }
                               _routingExample!.addWaypoint(
                                   Waypoint(state.searchResult[index]['geo']));
-                              debugPrint("${_routingExample!.waypoints.length}");
+                              debugPrint(
+                                  "${_routingExample!.waypoints.length}");
                               _routingExample!.addRoute();
                               mapController
                                   .flyTo(state.searchResult[index]['geo']);
@@ -123,6 +126,8 @@ class WSearchBar extends StatelessWidget {
                       ),
           );
         }),
+        ExploreRow(),
+        RowWidgets(),
       ],
     );
   }
