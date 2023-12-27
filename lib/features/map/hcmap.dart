@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:here_final/features/map/components/constants.dart';
+// import 'package:here_final/features/map/components/constants.dart';
 import 'package:here_final/features/map/components/draggable/draggablesection.dart';
 import 'package:here_final/features/map/components/map_utils.dart';
-import 'package:here_final/features/map/components/search_bar.dart';
+// import 'package:here_final/features/map/components/search_bar.dart';
 import 'package:here_final/features/map/map_controller.dart';
 import 'package:here_sdk/core.dart';
 import 'package:here_sdk/mapview.dart';
+import 'package:here_sdk/routing.dart';
+import '../routing/routing_file.dart';
 
 final mapProvider = ChangeNotifierProvider<MapController>((ref) {
   return MapController();
@@ -25,6 +27,11 @@ class _CHereMapState extends ConsumerState<CHereMap> {
   // MapController mapController = MapController();
   bool _locationIndicatorVisible = false;
   HereMapController? get hereMapController => ref.read(mapProvider).hereMapController;
+// class _CHereMapState extends State<CHereMap> {
+  // HereMapController? hereMapController;
+  MapController mapController = MapController();
+  RoutingExample? _routingExample;
+
   @override
   void initState() {
     super.initState();
@@ -51,13 +58,76 @@ class _CHereMapState extends ConsumerState<CHereMap> {
         if (!_locationIndicatorVisible) {
           ref.read(mapProvider).addLocationIndicator(_currentPosition);
         }
+        _routingExample = RoutingExample(_showDialog, controller);
       } else {}
     });
-    // hereMapController = controller;
   }
 
-  double top = 0.0;
-  double initialTop = 0.0;
+  void _addRouteButtonClicked(){
+    _routingExample?.addWaypoint(
+      Waypoint(
+        GeoCoordinates(18.3663,73.7559),
+      ),
+    );
+    _routingExample?.addWaypoint(
+      Waypoint(
+        GeoCoordinates(18.4454, 73.7801),
+      ),
+    );
+    _routingExample?.addWaypoint(
+      Waypoint(
+        GeoCoordinates(18.6783, 73.8950),
+      ),
+    );
+    _routingExample?.addRoute();
+  }
+
+  void _clearMapButtonClicked() {
+    _routingExample?.clearMap();
+  }
+
+  // A helper method to add a button on top of the HERE map.
+  Align button(String buttonLabel, Function callbackFunction) {
+    return Align(
+      alignment: Alignment.topCenter,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Colors.white,
+          backgroundColor: Colors.lightBlueAccent,
+        ),
+        onPressed: () => callbackFunction(),
+        child: Text(buttonLabel, style: TextStyle(fontSize: 20)),
+      ),
+    );
+  }
+
+  // A helper method to show a dialog.
+  Future<void> _showDialog(String title, String message) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(message),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,23 +154,37 @@ class _CHereMapState extends ConsumerState<CHereMap> {
           // )
 
           GestureDetector(
-            onPanUpdate: (DragUpdateDetails details) {
-              final double scrollPos = details.globalPosition.dy;
-              if (scrollPos < baseTop && scrollPos > searchBarHeight) {
-                setState(() {
-                  top = scrollPos;
-                });
-              }
-            },
+            // onPanUpdate: (DragUpdateDetails details) {
+            //   final double scrollPos = details.globalPosition.dy;
+            //   if (scrollPos < baseTop && scrollPos > searchBarHeight) {
+            //     setState(() {
+            //       top = scrollPos;
+            //     });
+            //   }
+            // },
             // child: DraggableSection(
             //   top: top == 0.0 ? baseTop : top,
             //   searchBarHeight: searchBarHeight,
             // ),
-            child: CDraggable(),
-          )
+            child: const CDraggable(),
+          ),
 
 
 
+        Positioned(
+          bottom: 50,
+          left: 20,
+          child: Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                button('Add Route', _addRouteButtonClicked),
+                button('Clear Map', _clearMapButtonClicked),
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }

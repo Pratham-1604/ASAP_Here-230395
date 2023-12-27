@@ -39,7 +39,7 @@ class MapController extends ChangeNotifier {
 
   Future<void> searchPlace(String query, GeoCoordinates start) async {
     isSearching = true;
-    print("searching for $query");
+    // print("searching for $query");
     if (query == "") {
       searchResult = [];
       isSearching = false;
