@@ -1,10 +1,16 @@
+// ignore_for_file: prefer_conditional_assignment
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:here_final/features/map/hcmap.dart';
+import 'package:here_final/features/routing/routing_file.dart';
 import 'package:here_sdk/core.dart';
+import 'package:here_sdk/routing.dart';
 
 class WSearchBar extends StatelessWidget {
   const WSearchBar({super.key});
+
+  static RoutingExample? _routingExample;
 
   @override
   Widget build(BuildContext context) {
@@ -31,12 +37,12 @@ class WSearchBar extends StatelessWidget {
                     ),
                     onTap: () {
                       state.sheet_controller.animateTo(1,
-                          duration: const Duration(milliseconds: 200), curve: Curves.easeIn);
+                          duration: const Duration(milliseconds: 200),
+                          curve: Curves.easeIn);
                     },
                     onTapOutside: (event) {
                       // hide the keyboard
                       FocusScope.of(context).requestFocus(FocusNode());
-
                     },
                     onChanged: (value) async {
                       final GeoCoordinates currentLocation =
@@ -84,12 +90,24 @@ class WSearchBar extends StatelessWidget {
                         itemCount: state.searchResult.length,
                         itemBuilder: (context, index) {
                           return ListTile(
-                            onTap: () {
+                            onTap: () async {
                               final mapController = ref.read(mapProvider);
                               mapController.addMarker(index);
+                              if (_routingExample == null) {
+                                _routingExample = RoutingExample(
+                                    mapController.hereMapController!);
+                              }
+                              if (_routingExample!.waypoints.isEmpty) {
+                                GeoCoordinates geo =
+                                    await mapController.getPermisson();
+                                _routingExample!.addWaypoint(Waypoint(geo));
+                              }
+                              _routingExample!.addWaypoint(
+                                  Waypoint(state.searchResult[index]['geo']));
+                              debugPrint("${_routingExample!.waypoints.length}");
+                              _routingExample!.addRoute();
                               mapController
                                   .flyTo(state.searchResult[index]['geo']);
-                              
                             },
                             title: Text(
                               state.searchResult[index]['title'],

@@ -30,7 +30,6 @@ class _CHereMapState extends ConsumerState<CHereMap> {
 // class _CHereMapState extends State<CHereMap> {
   // HereMapController? hereMapController;
   MapController mapController = MapController();
-  RoutingExample? _routingExample;
 
   @override
   void initState() {
@@ -58,32 +57,9 @@ class _CHereMapState extends ConsumerState<CHereMap> {
         if (!_locationIndicatorVisible) {
           ref.read(mapProvider).addLocationIndicator(_currentPosition);
         }
-        _routingExample = RoutingExample(_showDialog, controller);
+        // _routingExample = RoutingExample(controller);
       } else {}
     });
-  }
-
-  void _addRouteButtonClicked(){
-    _routingExample?.addWaypoint(
-      Waypoint(
-        GeoCoordinates(18.3663,73.7559),
-      ),
-    );
-    _routingExample?.addWaypoint(
-      Waypoint(
-        GeoCoordinates(18.4454, 73.7801),
-      ),
-    );
-    _routingExample?.addWaypoint(
-      Waypoint(
-        GeoCoordinates(18.6783, 73.8950),
-      ),
-    );
-    _routingExample?.addRoute();
-  }
-
-  void _clearMapButtonClicked() {
-    _routingExample?.clearMap();
   }
 
   // A helper method to add a button on top of the HERE map.
@@ -171,20 +147,20 @@ class _CHereMapState extends ConsumerState<CHereMap> {
 
 
 
-        Positioned(
-          bottom: 50,
-          left: 20,
-          child: Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                button('Add Route', _addRouteButtonClicked),
-                button('Clear Map', _clearMapButtonClicked),
-              ],
-            ),
-          ),
-        ),
+        // Positioned(
+        //   bottom: 50,
+        //   left: 20,
+        //   child: Center(
+        //     child: Row(
+        //       mainAxisAlignment: MainAxisAlignment.center,
+        //       crossAxisAlignment: CrossAxisAlignment.center,
+        //       children: [
+        //         button('Add Route', _addRouteButtonClicked),
+        //         button('Clear Map', _clearMapButtonClicked),
+        //       ],
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }

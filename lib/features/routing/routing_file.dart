@@ -16,15 +16,13 @@ class RoutingExample {
   final HereMapController _hereMapController;
   List<MapPolyline> _mapPolylines = [];
   late RoutingEngine _routingEngine;
-  final ShowDialogFunction _showDialog;
   List<Waypoint> waypoints = [];
   List<MapMarker> mapMarkers = [];
 
   RoutingExample(
-    ShowDialogFunction showDialogCallback,
+    // ShowDialogFunction showDialogCallback,
     HereMapController hereMapController,
-  )   : _showDialog = showDialogCallback,
-        _hereMapController = hereMapController {
+  ) : _hereMapController = hereMapController {
     double distanceToEarthInMeters = 10000;
     MapMeasure mapMeasureZoom = MapMeasure(
       MapMeasureKind.distance,
@@ -75,7 +73,7 @@ class RoutingExample {
         _animateToRoute(route);
       } else {
         var error = routingError.toString();
-        _showDialog('Error', 'Error while calculating a route: $error');
+        // _showDialog('Error', 'Error while calculating a route: $error');
       }
     });
   }
@@ -181,7 +179,7 @@ class RoutingExample {
     String routeDetails =
         'Travel Time: ${_formatTime(estimatedTravelTimeInSeconds)}, Traffic Delay: ${_formatTime(estimatedTrafficDelayInSeconds)}, Length: ${_formatLength(lengthInMeters)}';
 
-    _showDialog('Route Details', routeDetails);
+    // _showDialog('Route Details', routeDetails);
   }
 
   String _formatTime(int sec) {
@@ -202,7 +200,8 @@ class RoutingExample {
     // Show route as polyline.
     GeoPolyline routeGeoPolyline = route.geometry;
     double widthInPixels = 20;
-    Color polylineColor = Color.fromARGB(244, 241, 5, 5);
+    // Color polylineColor = Color.fromARGB(244, 252, 252, 252);
+    Color polylineColor = Colors.white.withOpacity(0.5);
     MapPolyline routeMapPolyline;
     try {
       routeMapPolyline = MapPolyline.withRepresentation(

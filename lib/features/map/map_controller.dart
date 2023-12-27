@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:here_sdk/core.dart';
 import 'package:here_sdk/mapview.dart';
+import 'package:here_sdk/routing.dart';
 import 'package:here_sdk/search.dart';
 
 class MapController extends ChangeNotifier {
@@ -19,6 +20,7 @@ class MapController extends ChangeNotifier {
   );
 
   List<MapMarker> mapMarkers = [];
+  List<GeoCoordinates> geo = [];
 
   // map stuff only -ends
 
