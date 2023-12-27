@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import 'package:here_final/features/map/components/constants.dart';
 import 'package:here_final/features/map/components/draggable/draggablesection.dart';
-import 'package:here_final/features/map/components/map_utils.dart';
+// import 'package:here_final/features/map/components/map_utils.dart';
+import 'package:here_final/features/map/components/top_side_bar/sidebar.dart';
 // import 'package:here_final/features/map/components/search_bar.dart';
 import 'package:here_final/features/map/map_controller.dart';
 import 'package:here_sdk/core.dart';
@@ -131,41 +132,16 @@ class _CHereMapState extends ConsumerState<CHereMap> {
 
   @override
   Widget build(BuildContext context) {
-    final baseTop = MediaQuery.of(context).size.height * 0.9;
 
     return Stack(
       children: [
         HereMap(
           onMapCreated: _onMapCreated,
         ),
-        const Align(
-          alignment: Alignment.bottomRight,
-          child: Padding(
-            padding: EdgeInsets.only(bottom: 32.0, right: 16.0),
-            child: AnimationToggle(),
-          ),
-          ),
-          // const Align(
-          //   alignment: Alignment.topCenter,
-          //   child: Padding(
-          //     padding: EdgeInsets.symmetric(horizontal:16.0, vertical: 32),
-          //     child: CSearchBar(),
-          //   ),
-          // )
+
+          const TopSection(),
 
           GestureDetector(
-            // onPanUpdate: (DragUpdateDetails details) {
-            //   final double scrollPos = details.globalPosition.dy;
-            //   if (scrollPos < baseTop && scrollPos > searchBarHeight) {
-            //     setState(() {
-            //       top = scrollPos;
-            //     });
-            //   }
-            // },
-            // child: DraggableSection(
-            //   top: top == 0.0 ? baseTop : top,
-            //   searchBarHeight: searchBarHeight,
-            // ),
             child: const CDraggable(),
           ),
 

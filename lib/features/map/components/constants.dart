@@ -1,1 +1,1 @@
-const searchBarHeight = 54.0;
+// const searchBarHeight = 54.0;

@@ -20,7 +20,7 @@ class _CDraggableState extends ConsumerState<CDraggable> {
           controller: ref.read(mapProvider).sheet_controller,
           initialChildSize: 0.2,
           minChildSize: 0.1,
-          maxChildSize: 0.95,
+          maxChildSize: 0.78,
           expand: true,
           
           // snap: true,
@@ -31,11 +31,12 @@ class _CDraggableState extends ConsumerState<CDraggable> {
           builder: (BuildContext context, ScrollController scrollController) {
             return SingleChildScrollView(
               controller: scrollController,
-              physics: const BouncingScrollPhysics(),
+              // physics: const BouncingScrollPhysics(),
               child: Container(
-                height: MediaQuery.of(context).size.height * 1.1,
+                height: MediaQuery.of(context).size.height * 0.78,
                 decoration:  BoxDecoration(
-                    color: Colors.white.withOpacity(0.5),
+                    // color: Colors.white.withOpacity(0.5),
+                    color: Colors.blueGrey.withOpacity(0.8),
                     borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(30),
                         topRight: Radius.circular(30)),
@@ -43,10 +44,11 @@ class _CDraggableState extends ConsumerState<CDraggable> {
                       BoxShadow(
                         blurRadius: 30,
                         color: Colors.black12,
+                        // color: Colors.white24,
                       )
                     ]),
 
-                    child: Column(
+                    child: const Column(
                       children: [
                         WSearchBar()
                       ],
