@@ -47,7 +47,7 @@ class _CHereMapState extends State<CHereMap> {
         controller.camera.lookAtPoint(
           GeoCoordinates(_currentPosition.latitude, _currentPosition.longitude));
       } else {
-        print("Map scene not loaded. MapError: " + error.toString());
+        // print("Map scene not loaded. MapError: " + error.toString());
       }
     });
     hereMapController = controller;
@@ -55,8 +55,12 @@ class _CHereMapState extends State<CHereMap> {
 
   @override
   Widget build(BuildContext context) {
-    return HereMap(
-      onMapCreated: _onMapCreated,
+    return Stack(
+      children: [
+        HereMap(
+          onMapCreated: _onMapCreated,
+        ),
+      ],
     );
   }
 }
