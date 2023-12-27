@@ -68,10 +68,9 @@ class WSearchBar extends StatelessWidget {
             return Container();
           }
           return Container(
-            // height: MediaQuery.of(context).size.height * 0.3,
             height: (state.searchResult.isEmpty)
                 ? MediaQuery.of(context).size.height * 0.3
-                : MediaQuery.of(context).size.height * 0.69,
+                : MediaQuery.of(context).size.height * 0.65,
             margin: const EdgeInsets.symmetric(horizontal: 20),
             decoration: BoxDecoration(
               color: Colors.black.withOpacity(0.5),
@@ -87,6 +86,8 @@ class WSearchBar extends StatelessWidget {
                         ),
                       )
                     : ListView.builder(
+                      padding: const EdgeInsets.all(8),
+                      // shrinkWrap: true,
                         itemCount: state.searchResult.length,
                         itemBuilder: (context, index) {
                           return ListTile(

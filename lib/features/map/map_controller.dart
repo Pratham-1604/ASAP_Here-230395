@@ -61,10 +61,25 @@ class MapController extends ChangeNotifier {
       }
       for (var i = 0; i < p1.length; i++) {
         final place = p1[i].place;
+        if (place == null) {
+          continue;
+        }
         final title = p1[i].title;
+        if (title == null) {
+          continue;
+        }
         final address = place!.address;
+        if (address == null) {
+          continue;
+        }
         final addressText = address.addressText;
+        if (addressText == null) {
+          continue;
+        }
         final geoCoordinates = place.geoCoordinates;
+        if (geoCoordinates == null) {
+          continue;
+        }
         // final latitude = geoCoordinates!.latitude;
         // final longitude = geoCoordinates.longitude;
         final data = {
