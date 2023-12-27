@@ -12,9 +12,9 @@ void _initializeHERESDK() async {
   SdkContext.init(IsolateOrigin.main);
 
   // Set your credentials for the HERE SDK.
-  String accessKeyId = "mbmLosDSem7_ljHgub7Qrg";
+  String accessKeyId = "CUTO1DZzOaVI2hNQihijyQ";
   String accessKeySecret =
-      "I5_O9L9V0ThyE-n9evGsBELz7TGKmm2a97EiJp-joZNUS_6RjRKtPffZtR8gMtE_VcZh4iJSPO0s5GmVrP6r-w";
+      "WS_itwdUlIZaLkPYjX4LikocEKo6jD3FHuDGkEWGO62hv9gjtHH4gOYCCz8JaSv8YgoLl7NqrAAd9KxhJ7jQEg";
   SDKOptions sdkOptions =
       SDKOptions.withAccessKeySecret(accessKeyId, accessKeySecret);
 
