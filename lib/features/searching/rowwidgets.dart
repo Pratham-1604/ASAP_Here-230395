@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:here_final/features/map/hcmap.dart';
-import 'package:here_final/features/map/map_controller.dart';
 import 'package:here_final/features/searching/searching.dart';
 import 'package:here_sdk/core.dart';
 import 'package:here_sdk/search.dart';

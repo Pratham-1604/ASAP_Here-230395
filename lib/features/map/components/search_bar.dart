@@ -9,10 +9,15 @@ import 'package:here_final/features/searching/rowwidgets.dart';
 import 'package:here_sdk/core.dart';
 import 'package:here_sdk/routing.dart';
 
-class WSearchBar extends StatelessWidget {
+class WSearchBar extends StatefulWidget {
   const WSearchBar({super.key});
 
-  static RoutingExample? _routingExample;
+  @override
+  State<WSearchBar> createState() => _WSearchBarState();
+}
+
+class _WSearchBarState extends State<WSearchBar> {
+  RoutingExample? _routingExample;
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +112,7 @@ class WSearchBar extends StatelessWidget {
                               }
                               _routingExample!.addWaypoint(
                                   Waypoint(state.searchResult[index]['geo']));
-                              debugPrint("${_routingExample!.waypoints.length}");
+                              debugPrint("$_routingExample!.waypoints.length}");
                               mapController.routingExample = _routingExample;
                               _routingExample!.addRoute();
 
@@ -128,7 +133,7 @@ class WSearchBar extends StatelessWidget {
           );
         }),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal:8.0, vertical:12),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12),
           child: ExploreRow(),
         ),
         const Padding(
