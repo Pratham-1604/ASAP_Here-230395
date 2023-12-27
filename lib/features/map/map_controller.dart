@@ -161,6 +161,29 @@ class MapController extends ChangeNotifier {
     }
   }
 
+  void showMultipleMarkers(List<GeoCoordinates> a) {
+    if (hereMapController != null) {
+      List<MapMarker> markers = [];
+      for (var i in a) {
+        final marker = MapMarker(
+          i,
+          MapImage.withFilePathAndWidthAndHeight(
+            'assets/poi2.png',
+            50,
+            50,
+          ),
+        );
+        markers.add(marker);
+      }
+      hereMapController?.mapScene.addMapMarkers(
+        markers,
+      );
+      // mapMarkers.add(marker);
+
+      flyTo(a[0]);
+    }
+  }
+
   void toggleTraffic() {
     trafficEnabled = !trafficEnabled;
     if (hereMapController != null && trafficEnabled) {
