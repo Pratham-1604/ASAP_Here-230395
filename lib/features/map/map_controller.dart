@@ -29,6 +29,12 @@ class MapController extends ChangeNotifier {
 
   // search stuff only
   List<Map> searchResult = [];
+  TextEditingController textEditor = TextEditingController();
+  void emptySearchResult() {
+    searchResult = [];
+    notifyListeners();
+  }
+
   bool isSearching = false;
 
   // search stuff only -ends

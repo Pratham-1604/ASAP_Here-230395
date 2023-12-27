@@ -30,6 +30,7 @@ class WSearchBar extends StatelessWidget {
                 child: Consumer(builder: (context, ref, child) {
                   final state = ref.watch(mapProvider);
                   return TextField(
+                    controller: state.textEditor,
                     style: const TextStyle(color: Colors.white),
                     decoration: const InputDecoration(
                       hintText: "Search",
@@ -50,17 +51,34 @@ class WSearchBar extends StatelessWidget {
                       final GeoCoordinates currentLocation =
                           await state.getPermisson();
                       await state.searchPlace(value, currentLocation);
+                      if (value == "") {
+                        state.searchResult = [];
+                      }
                     },
+                    onEditingComplete: () {},
                   );
                 }),
               ),
-              const Padding(
-                padding: EdgeInsets.only(right: 15.0),
-                child: Icon(
-                  Icons.search,
-                  color: Colors.white,
-                ),
-              ),
+              Consumer(builder: (ctx, ref, child) {
+                final state = ref.watch(mapProvider);
+                return InkWell(
+                  onTap: () {
+                    if (state.searchResult.isNotEmpty) {
+                      state.emptySearchResult();
+                      state.textEditor.clear();
+                    }
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 15.0),
+                    child: Icon(
+                      (state.searchResult.isEmpty
+                          ? Icons.search
+                          : Icons.cancel_rounded),
+                      color: Colors.white,
+                    ),
+                  ),
+                );
+              }),
             ],
           ),
         ),
@@ -107,7 +125,8 @@ class WSearchBar extends StatelessWidget {
                               }
                               _routingExample!.addWaypoint(
                                   Waypoint(state.searchResult[index]['geo']));
-                              debugPrint("${_routingExample!.waypoints.length}");
+                              debugPrint(
+                                  "${_routingExample!.waypoints.length}");
                               mapController.routingExample = _routingExample;
                               _routingExample!.addRoute();
 
@@ -128,7 +147,7 @@ class WSearchBar extends StatelessWidget {
           );
         }),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal:8.0, vertical:12),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12),
           child: ExploreRow(),
         ),
         const Padding(
