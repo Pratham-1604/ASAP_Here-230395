@@ -65,7 +65,7 @@ class WSearchBar extends StatelessWidget {
             // height: MediaQuery.of(context).size.height * 0.3,
             height: (state.searchResult.isEmpty)
                 ? MediaQuery.of(context).size.height * 0.3
-                : MediaQuery.of(context).size.height * 0.2,
+                : MediaQuery.of(context).size.height * 0.69,
             margin: const EdgeInsets.symmetric(horizontal: 20),
             decoration: BoxDecoration(
               color: Colors.black.withOpacity(0.5),
@@ -85,26 +85,7 @@ class WSearchBar extends StatelessWidget {
                         itemBuilder: (context, index) {
                           return ListTile(
                             onTap: () {
-                              // city.changeCity(city.searchResults[index]);
-                              // Navigator.pop(context);
-                              // add a marker to the map
-                              // _homeController.mapScene.addMapMarker(
-                              //   MapMarker(
-                              //     GeoCoordinates(
-                              //       state.searchResult[index]['latitude'],
-                              //       state.searchResult[index]['longitude'],
-                              //     ),
-                              //     MapImage.withFilePathAndWidthAndHeight(
-                              //       'assets/poi.png',
-                              //       50,
-                              //       50,
-                              //     ),
-                              //   ),
-                              // );
                               final mapController = ref.read(mapProvider);
-                              // ref.read(mapProvider).addMarker(
-                              //       index
-                              //     );
                               mapController.addMarker(index);
                               mapController
                                   .flyTo(state.searchResult[index]['geo']);

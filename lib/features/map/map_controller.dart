@@ -39,6 +39,13 @@ class MapController extends ChangeNotifier {
 
   Future<void> searchPlace(String query, GeoCoordinates start) async {
     isSearching = true;
+    print("searching for $query");
+    if (query == "") {
+      searchResult = [];
+      isSearching = false;
+      notifyListeners();
+      return;
+    }
     notifyListeners();
     SearchEngine searchEngine = SearchEngine();
     SearchOptions searchOptions = SearchOptions();
@@ -77,6 +84,12 @@ class MapController extends ChangeNotifier {
     });
   }
 
+  void clearSearch() {
+    searchResult = [];
+    isSearching = false;
+    notifyListeners();
+  }
+
   // search controls -ends
 
   // map controls only
@@ -98,6 +111,9 @@ class MapController extends ChangeNotifier {
         marker,
       );
       mapMarkers.add(marker);
+      sheet_controller.animateTo(0.1,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInSine);
     }
   }
 
