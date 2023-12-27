@@ -18,6 +18,7 @@ class RoutingExample {
   late RoutingEngine _routingEngine;
   final ShowDialogFunction _showDialog;
   List<Waypoint> waypoints = [];
+  List<MapMarker> mapMarkers = [];
 
   RoutingExample(
     ShowDialogFunction showDialogCallback,
@@ -68,7 +69,7 @@ class RoutingExample {
         here.Route route = routeList!.first;
         _showRouteDetails(route);
         _showRouteOnMap(route);
-        _logRouteSectionDetails(route);
+        // _logRouteSectionDetails(route);
         _logRouteViolations(route);
         _logTollDetails(route);
         _animateToRoute(route);
@@ -125,6 +126,14 @@ class RoutingExample {
     _mapPolylines.clear();
   }
 
+  void clearMarkers() {
+    _hereMapController.mapScene.removeMapMarkers(mapMarkers);
+  }
+
+  void clearWayPoints() {
+    waypoints.clear();
+  }
+
   void _logRouteSectionDetails(here.Route route) {
     DateFormat dateFormat = DateFormat().add_Hm();
 
@@ -141,8 +150,26 @@ class RoutingExample {
     }
   }
 
-  void _showAavatars (){
-    // _hereMapController.
+  void _showAavatars(Waypoint a, bool isFirst, bool isLast) {
+    debugPrint("${a.coordinates} $isFirst $isLast");
+    final marker = MapMarker(
+      a.coordinates,
+      MapImage.withFilePathAndWidthAndHeight(
+        isFirst
+            ? 'assets/poi.png'
+            : isLast
+                ? 'assets/poi2.png'
+                : 'assets/poi3.png',
+        50,
+        50,
+      ),
+    );
+    _hereMapController.mapScene.addMapMarker(
+      marker,
+    );
+    mapMarkers.add(marker);
+    // sheet_controller.animateTo(0.1,
+    // duration: const Duration(milliseconds: 200), curve: Curves.easeInSine);
   }
 
   void _showRouteDetails(here.Route route) {
@@ -187,6 +214,12 @@ class RoutingExample {
               LineCap.round));
       _hereMapController.mapScene.addMapPolyline(routeMapPolyline);
       _mapPolylines.add(routeMapPolyline);
+
+      _showAavatars(waypoints[0], true, false);
+      for (int i = 1; i < waypoints.length - 1; i++) {
+        _showAavatars(waypoints[i], false, false);
+      }
+      _showAavatars(waypoints[waypoints.length - 1], false, true);
     } on MapPolylineRepresentationInstantiationException catch (e) {
       print("MapPolylineRepresentation Exception:${e.error.name}");
       return;
