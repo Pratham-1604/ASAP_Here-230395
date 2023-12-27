@@ -48,10 +48,12 @@ class _CDraggableState extends ConsumerState<CDraggable> {
                       )
                     ]),
 
-                    child: const Column(
-                      children: [
-                        WSearchBar()
-                      ],
+                    child: const SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          WSearchBar()
+                        ],
+                      ),
                     ),
                 ),
             );

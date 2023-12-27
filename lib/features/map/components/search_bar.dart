@@ -127,8 +127,14 @@ class WSearchBar extends StatelessWidget {
                       ),
           );
         }),
-        ExploreRow(),
-        RowWidgets(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal:8.0, vertical:12),
+          child: ExploreRow(),
+        ),
+        const Padding(
+          padding: EdgeInsets.all(8.0),
+          child: RowWidgets(),
+        ),
       ],
     );
   }
