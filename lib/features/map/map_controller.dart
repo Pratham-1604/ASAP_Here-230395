@@ -1,34 +1,37 @@
-
-
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-
-
+import 'package:here_sdk/core.dart';
 
 class MapController extends ChangeNotifier {
+  Future<GeoCoordinates> determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
 
-Future<Position> getPermisson() async {
-  bool serviceEnabled;
-  LocationPermission permission;
-
-  serviceEnabled = await Geolocator.isLocationServiceEnabled();
-  if (!serviceEnabled) {
-    return Future.error('Location services are disabled.');
-  }
-
-  permission = await Geolocator.checkPermission();
-  if (permission == LocationPermission.denied) {
-    permission = await Geolocator.requestPermission();
-    if (permission == LocationPermission.denied) {
-      return Future.error('Location permissions are denied');
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return GeoCoordinates(18.516726, 73.856255);
     }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // showsnackbar(context: context, msg: 'Pls allow location services!');
+        permission = await Geolocator.requestPermission();
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      // showsnackbar(context: context, msg: 'Permissions denied forever!');
+
+      // Set default coordinates or handle as needed
+      return GeoCoordinates(18.516726, 73.856255);
+    }
+
+    // Continue with normal flow
+    Position a = await Geolocator.getCurrentPosition();
+    GeoCoordinates geo = GeoCoordinates(a.latitude, a.longitude);
+    return geo;
   }
-  
-  if (permission == LocationPermission.deniedForever) {
-    return Future.error(
-      'Location permissions are permanently denied, we cannot request permissions.');
-  } 
-  return await Geolocator.getCurrentPosition();
-}
- 
 }

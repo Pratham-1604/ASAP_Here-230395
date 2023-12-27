@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
@@ -19,29 +17,28 @@ class CHereMap extends StatefulWidget {
 }
 
 class _CHereMapState extends State<CHereMap> {
-
-  Position _currentPosition  =Position(altitudeAccuracy: 0, longitude: 0, latitude: 0, timestamp: DateTime.now(), accuracy: 1, altitude: 0, heading: 0, speed: 0, speedAccuracy: 0, headingAccuracy: 0);
+  GeoCoordinates _currentPosition = GeoCoordinates(18.516726, 73.856255);
   HereMapController? hereMapController;
   MapController mapController = MapController();
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       // context.read(mapProvider).getPermisson();
-      mapController.getPermisson().then((value) => setState(() {
-        _currentPosition = value;
-      }));
-      
+      mapController.determinePosition().then((value) => setState(() {
+            _currentPosition = value;
+          }));
     });
   }
 
-  void _onMapCreated (HereMapController controller) {
-    controller.mapScene.loadSceneForMapScheme(MapScheme.normalNight, (MapError? error) {
+  void _onMapCreated(HereMapController controller) {
+    controller.mapScene.loadSceneForMapScheme(MapScheme.normalNight,
+        (MapError? error) {
       if (error == null) {
-        controller.camera.lookAtPoint(
-          GeoCoordinates(_currentPosition.latitude, _currentPosition.longitude));
+        controller.camera.lookAtPoint(GeoCoordinates(
+            _currentPosition.latitude, _currentPosition.longitude));
       } else {
-        print("Map scene not loaded. MapError: " + error.toString());
+        debugPrint("Map scene not loaded. MapError: $error");
       }
     });
     hereMapController = controller;
@@ -54,5 +51,3 @@ class _CHereMapState extends State<CHereMap> {
     );
   }
 }
-
-
