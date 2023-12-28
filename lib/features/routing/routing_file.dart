@@ -10,6 +10,7 @@ import 'package:here_sdk/mapview.dart';
 import 'package:here_sdk/navigation.dart';
 import 'package:here_sdk/routing.dart';
 import 'package:here_sdk/routing.dart' as here;
+import 'package:here_sdk/trafficawarenavigation.dart';
 import 'package:intl/intl.dart';
 
 // A callback to notify the hosting widget.
@@ -19,6 +20,7 @@ class RoutingExample {
   final HereMapController _hereMapController;
   List<MapPolyline> _mapPolylines = [];
   late RoutingEngine _routingEngine;
+  late DynamicRoutingEngine _dynamicRoutingEngine;
   List<Waypoint> waypoints = [];
   List<MapMarker> mapMarkers = [];
   Map? routeDetails;
@@ -26,6 +28,9 @@ class RoutingExample {
   here.Route? route;
 
   final MapController? mapCh;
+  
+  MapMatchedLocation? _lastMapMatchedLocation;
+
   RoutingExample(
     // ShowDialogFunction showDialogCallback,
     HereMapController hereMapController,
@@ -46,6 +51,7 @@ class RoutingExample {
 
     try {
       _routingEngine = RoutingEngine();
+      // _dynamicRoutingEngine = DynamicRoutingEngine();
     } on InstantiationException {
       throw ("Initialization of RoutingEngine failed.");
     }
@@ -92,8 +98,44 @@ class RoutingExample {
     return;
   }
 
+  void _startDynamicSearchForBetterRoutes(here.Route route) {
+  try {
+    // Note that the engine will be internally stopped, if it was started before.
+    // Therefore, it is not necessary to stop the engine before starting it again.
+    _dynamicRoutingEngine.start(
+        route,
+        // Notifies on traffic-optimized routes that are considered better than the current route.
+        DynamicRoutingListener((here.Route newRoute, int etaDifferenceInSeconds, int distanceDifferenceInMeters) {
+          print('DynamicRoutingEngine: Calculated a new route.');
+          print('DynamicRoutingEngine: etaDifferenceInSeconds: $etaDifferenceInSeconds.');
+          print('DynamicRoutingEngine: distanceDifferenceInMeters: $distanceDifferenceInMeters.');
+
+          // An implementation needs to decide when to switch to the new route based
+          // on above criteria.
+        }, (RoutingError routingError) {
+          final error = routingError.toString();
+          print('Error while dynamically searching for a better route: $error');
+        }));
+  } on DynamicRoutingEngineStartException {
+    throw Exception("Start of DynamicRoutingEngine failed. Is the RouteHandle missing?");
+  }
+}
+
+  
+
+
   Future<void> addRoute() async {
     CarOptions carOptions = CarOptions();
+
+    DynamicRoutingEngineOptions dynamicRoutingEngineOptions =
+        DynamicRoutingEngineOptions();
+
+      dynamicRoutingEngineOptions.minTimeDifference = const Duration(seconds: 10);
+
+      dynamicRoutingEngineOptions.minTimeDifferencePercentage = 0.1;
+
+    _dynamicRoutingEngine = DynamicRoutingEngine(dynamicRoutingEngineOptions);
+
     carOptions.routeOptions.enableTolls = true;
     carOptions.routeOptions.enableRouteHandle = true;
     debugPrint(waypoints.length.toString());
@@ -138,13 +180,37 @@ class RoutingExample {
     //   _notification = val;
     // }
 
+visualNavigator.routeProgressListener = RouteProgressListener((RouteProgress routeProgress) {
+      // Handle results from onRouteProgressUpdated():
+      // List<SectionProgress> sectionProgressList = routeProgress.sectionProgress;
+      // // sectionProgressList is guaranteed to be non-empty.
+      // SectionProgress lastSectionProgress = sectionProgressList.elementAt(sectionProgressList.length - 1);
+      // print('Distance to destination in meters: ' + lastSectionProgress.remainingDistanceInMeters.toString());
+      // print('Traffic delay ahead in seconds: ' + lastSectionProgress.trafficDelay.inSeconds.toString());
 
+      // // Contains the progress for the next maneuver ahead and the next-next maneuvers, if any.
+      // List<ManeuverProgress> nextManeuverList = routeProgress.maneuverProgress;
+
+      // ManeuverProgress nextManeuverProgress = nextManeuverList.first;
+
+      // int nextManeuverIndex = nextManeuverProgress.maneuverIndex;
+      // Maneuver? nextManeuver = visualNavigator.getManeuver(nextManeuverIndex);
+      // if (nextManeuver == null) {
+      //   // Should never happen as we retrieved the next maneuver progress above.
+      //   return;
+      // }
+
+
+      if (_lastMapMatchedLocation != null) {
+        // Update the route based on the current location of the driver.
+        // We periodically want to search for better traffic-optimized routes.
+        _dynamicRoutingEngine.updateCurrentLocation(_lastMapMatchedLocation!, routeProgress.sectionIndex);
+      }
+    });
 
     visualNavigator.maneuverNotificationListener =
         ManeuverNotificationListener((String maneuverText) {
       mapCh?.updateNotification(maneuverText);
-      // print("ManeuverNotifications: $maneuverText");
-      // notification(maneuverText);
     });
 
     visualNavigator.navigableLocationListener =
@@ -153,9 +219,10 @@ class RoutingExample {
       MapMatchedLocation? mapMatchedLocation =
           currentNavigableLocation.mapMatchedLocation;
       if (mapMatchedLocation == null) {
-        print('This new location could not be map-matched. Are you off-road?');
+        // print('This new location could not be map-matched. Are you off-road?');
         return;
       }
+      _lastMapMatchedLocation = mapMatchedLocation;
 
       var speed =
           currentNavigableLocation.originalLocation.speedInMetersPerSecond;
@@ -406,11 +473,11 @@ class RoutingExample {
     if (jamFactor == null || jamFactor < 4) {
       return null;
     } else if (jamFactor >= 4 && jamFactor < 8) {
-      return Color.fromARGB(160, 255, 255, 0); // Yellow
+      return const Color.fromARGB(160, 255, 255, 0); // Yellow
     } else if (jamFactor >= 8 && jamFactor < 10) {
-      return Color.fromARGB(160, 255, 0, 0); // Red
+      return const Color.fromARGB(160, 255, 0, 0); // Red
     }
-    return Color.fromARGB(160, 0, 0, 0); // Black
+    return const Color.fromARGB(160, 0, 0, 0); // Black
   }
 
   void _animateToRoute(here.Route route) {

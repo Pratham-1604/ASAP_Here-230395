@@ -70,7 +70,7 @@ class _RowWidgetsState extends ConsumerState<RowWidgets> {
               size: 26,
             ),
             onTap: () async {
-            await  RowWidgets.newSearchEngine.getPlaces(
+            await RowWidgets.newSearchEngine.getPlaces(
                 categoryList: PlaceCategory(
                   PlaceCategory.businessAndServicesFuelingStation,
                 ),
