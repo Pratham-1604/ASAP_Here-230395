@@ -48,7 +48,9 @@ https://github.com/Pratham-1604/ASAP_Here-230395/assets/86979829/a2950c91-73e1-4
  
 ## Future Scope :
 
-1) Provide Fuel Efficient Routes : By using parameters like engine type car mileage. Also by constantly monitoring the speed and giving alerts when there are any sudden changes, minimising idle time etc.
-2) Incorporating Reviews : Taking place reviews into account in order to promote community building while simultaneously gaining more data for accurate services.
+1) **Provide Fuel Efficient Routes** : By using parameters like engine type car mileage. Also by constantly monitoring the speed and giving alerts when there are any sudden changes, minimising idle time etc.
+2) **Incorporating Reviews** : Taking place reviews into account in order to promote community building while simultaneously gaining more data for accurate services.
+3) **Low Fuel Rerouting** : Automatically navigate users to fuel stations when their vehicle's fuel drops below a certain threshold. The fuel level is tracked using the vehicle's capacity and mileage
+
 
 Take your first step with Pravaas Mitra to ensure a smooth and safe journey!
