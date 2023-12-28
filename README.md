@@ -4,7 +4,7 @@ Welcome to Pravaas Mitra! Your ultimate travel assistant for discovering new pla
 
 ## User Flow Diagram
 
-<img src="https://github.com/Pratham-1604/ASAP_Here-230395/blob/master/assets/img4.jpg" width="80%" height="80%">
+<img src="https://github.com/Pratham-1604/ASAP_Here-230395/blob/master/assets/img4.jpg" width="100%" height="100%">
 
 ## Features
 
