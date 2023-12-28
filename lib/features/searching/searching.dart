@@ -2,7 +2,6 @@
 
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:here_sdk/core.dart';
 import 'package:here_sdk/core.errors.dart';
 import 'package:here_sdk/search.dart';

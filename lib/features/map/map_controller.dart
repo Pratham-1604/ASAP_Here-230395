@@ -6,7 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:here_final/features/routing/routing_file.dart';
 import 'package:here_sdk/core.dart';
 import 'package:here_sdk/mapview.dart';
-import 'package:here_sdk/routing.dart';
+// import 'package:here_sdk/routing.dart';
 // import 'package:here_sdk/routing.dart';
 import 'package:here_sdk/search.dart';
 import 'package:here_sdk/routing.dart' as here;
@@ -55,13 +55,27 @@ class MapController extends ChangeNotifier {
     routingExample = value;
   }
 
+  void toggleLocationIndicator(bool enable) async {
+    if (!enable && locationIndicator.isActive) {
+      locationIndicator.disable();
+      // hereMapController?.removeLifecycleListener(locationIndicator);
+    } else if (enable) {
+      // final GeoCoordinates geo = await getPermisson();
+      // locationIndicator = LocationIndicator();
+      // addLocationIndicator(geo);
+      locationIndicator.enable(hereMapController as MapViewBase);
+    }
+  }
+
   void toggleRouting() {
     if (!isRouting && routingExample != null && routingExample?.route != null) {
       routingExample?.startGuidance(routingExample?.route as here.Route);
+      toggleLocationIndicator(false);
     } else if (isRouting &&
         routingExample != null &&
         routingExample?.route != null) {
       routingExample?.stopLocationSimulator();
+      toggleLocationIndicator(true);
     }
     isRouting = !isRouting;
 

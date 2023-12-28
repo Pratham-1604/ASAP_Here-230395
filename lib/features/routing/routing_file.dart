@@ -253,13 +253,6 @@ class RoutingExample {
     // duration: const Duration(milliseconds: 200), curve: Curves.easeInSine);
   }
 
-  void updateAvatar() {
-    _showAavatars(waypoints[0], true, false);
-    for (int i = 1; i < waypoints.length - 1; i++) {
-      _showAavatars(waypoints[i], false, false);
-    }
-  }
-
   void _showRouteDetails(here.Route route) {
     // estimatedTravelTimeInSeconds includes traffic delay.
     int estimatedTravelTimeInSeconds = route.duration.inSeconds;
@@ -303,7 +296,10 @@ class RoutingExample {
               LineCap.round));
       _hereMapController.mapScene.addMapPolyline(routeMapPolyline);
       _mapPolylines.add(routeMapPolyline);
-
+      _showAavatars(waypoints[0], true, false);
+      for (int i = 1; i < waypoints.length - 1; i++) {
+        _showAavatars(waypoints[i], false, false);
+      }
       _showAavatars(waypoints[waypoints.length - 1], false, true);
     } on MapPolylineRepresentationInstantiationException catch (e) {
       print("MapPolylineRepresentation Exception:${e.error.name}");
