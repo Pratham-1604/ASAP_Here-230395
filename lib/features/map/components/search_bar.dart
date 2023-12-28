@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_conditional_assignment, prefer_const_constructors
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:here_final/features/map/hcmap.dart';
@@ -57,7 +59,24 @@ class _WSearchBarState extends State<WSearchBar> {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: ListTile(
-                title: Text(routeDet["total_time"], style: TextStyle(color: Colors.white),),
+                title: Consumer(
+                  builder: (context,ref, child) {
+                    final state = ref.watch(mapProvider);
+                    if(state.isRouting){
+                      double speed = 0;
+                      final random = Random();
+                      int randomValue = random.nextInt(2);
+                      if (randomValue ==0) {
+                        speed = state.drivingSpeed - state.speedAccuracy;
+                      }
+                      else{
+                        speed = state.drivingSpeed + state.speedAccuracy;
+                      }
+                      return Text("${routeDet["total_time"]} | ${speed.toStringAsFixed(2)} m/s", style: TextStyle(color: Colors.white),);
+                    }
+                    return Text(routeDet["total_time"], style: TextStyle(color: Colors.white),);
+                  }
+                ),
                 subtitle: Text(
                   "${routeDet["traffic"]} ,${routeDet["length"]}",
                   style: const TextStyle(color: Colors.white54),

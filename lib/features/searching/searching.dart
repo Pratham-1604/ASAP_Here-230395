@@ -2,12 +2,15 @@
 
 import 'dart:async';
 
+import 'package:geolocator/geolocator.dart';
+import 'package:here_final/features/map/map_controller.dart';
 import 'package:here_sdk/core.dart';
 import 'package:here_sdk/core.errors.dart';
 import 'package:here_sdk/search.dart';
 
 class Searching {
   SearchEngine? _searchEngine;
+  MapController mapController = MapController();
 
   Searching() {
     try {
@@ -20,11 +23,11 @@ class Searching {
   Future<List<GeoCoordinates>> getPlaces({
     required PlaceCategory categoryList,
     required GeoCoordinates geoCoordinates,
-  }) {
+  }) async {
     Completer<List<GeoCoordinates>> completer =
         Completer<List<GeoCoordinates>>();
-
-    var queryArea = CategoryQueryArea.withCenter(geoCoordinates);
+    final GeoCoordinates cP = await mapController.getPermisson();
+    var queryArea = CategoryQueryArea.withCenter(cP);
     CategoryQuery categoryQuery = CategoryQuery.withCategoriesInArea(
       [categoryList],
       queryArea,

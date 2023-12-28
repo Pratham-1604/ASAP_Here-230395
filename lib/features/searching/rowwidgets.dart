@@ -53,8 +53,8 @@ class _RowWidgetsState extends ConsumerState<RowWidgets> {
               color: Color(0xff27AE60),
               size: 26,
             ),
-            onTap: () {
-              RowWidgets.newSearchEngine.getPlaces(
+            onTap: () async {
+              await RowWidgets.newSearchEngine.getPlaces(
                 categoryList: PlaceCategory(
                   PlaceCategory.accommodation,
                 ),
@@ -69,8 +69,8 @@ class _RowWidgetsState extends ConsumerState<RowWidgets> {
               color: Color(0xff2F80ED),
               size: 26,
             ),
-            onTap: () {
-              RowWidgets.newSearchEngine.getPlaces(
+            onTap: () async {
+            await  RowWidgets.newSearchEngine.getPlaces(
                 categoryList: PlaceCategory(
                   PlaceCategory.businessAndServicesFuelingStation,
                 ),
