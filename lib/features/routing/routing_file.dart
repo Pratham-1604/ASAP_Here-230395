@@ -21,7 +21,7 @@ class RoutingExample {
   late RoutingEngine _routingEngine;
   List<Waypoint> waypoints = [];
   List<MapMarker> mapMarkers = [];
-
+  Map? routeDetails;
   // for refresh route
   here.Route? route;
 
@@ -41,6 +41,8 @@ class RoutingExample {
       GeoCoordinates(52.520798, 13.409408),
       mapMeasureZoom,
     );
+
+    routeDetails = {};
 
     try {
       _routingEngine = RoutingEngine();
@@ -71,6 +73,10 @@ class RoutingExample {
     }
   }
 
+  set routeDet(Map r) {
+    routeDetails = r;
+  }
+
   void addWaypoint(Waypoint a) {
     waypoints.add(a);
     return;
@@ -97,7 +103,7 @@ class RoutingExample {
         // When error is null, then the list guaranteed to be not null.
         // here.Route route = routeList!.first;
         route = routeList!.first;
-        _showRouteDetails(route!);
+        showRouteDetails(route!);
         _showRouteOnMap(route!);
         // _logRouteSectionDetails(route);
         _logRouteViolations(route!);
@@ -286,7 +292,7 @@ class RoutingExample {
     // duration: const Duration(milliseconds: 200), curve: Curves.easeInSine);
   }
 
-  void _showRouteDetails(here.Route route) {
+  void showRouteDetails(here.Route route) {
     // estimatedTravelTimeInSeconds includes traffic delay.
     int estimatedTravelTimeInSeconds = route.duration.inSeconds;
     int estimatedTrafficDelayInSeconds = route.trafficDelay.inSeconds;
@@ -295,6 +301,11 @@ class RoutingExample {
     String routeDetails =
         'Travel Time: ${_formatTime(estimatedTravelTimeInSeconds)}, Traffic Delay: ${_formatTime(estimatedTrafficDelayInSeconds)}, Length: ${_formatLength(lengthInMeters)}';
 
+    routeDet =  {
+      "total_time": _formatTime(estimatedTravelTimeInSeconds),
+      "traffic": _formatTime(estimatedTrafficDelayInSeconds),
+      "length": _formatLength(lengthInMeters),
+    };
     // _showDialog('Route Details', routeDetails);
   }
 
