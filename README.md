@@ -1,4 +1,4 @@
-# Pravaas Mitra 🌍✈️ - Travel Companion App
+# Pravaas Mitra 🚗 - Travel Companion App
 
 Welcome to Pravaas Mitra! Your ultimate travel assistant for discovering new places and monitoring live traffic data.
 
