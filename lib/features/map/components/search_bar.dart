@@ -57,9 +57,10 @@ class _WSearchBarState extends State<WSearchBar> {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: ListTile(
-                title: Text(routeDet["total_time"]),
+                title: Text(routeDet["total_time"], style: TextStyle(color: Colors.white),),
                 subtitle: Text(
                   "${routeDet["traffic"]} ,${routeDet["length"]}",
+                  style: const TextStyle(color: Colors.white54),
                 ),
                 trailing: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -74,6 +75,7 @@ class _WSearchBarState extends State<WSearchBar> {
                         icon: Icon(
                           Icons.start,
                           size: 30,
+                          color: Colors.white,
                         ),
                       );
                     }),
@@ -108,16 +110,18 @@ class _WSearchBarState extends State<WSearchBar> {
                           debugPrint(places.length.toString());
                           return Container(
                             decoration: BoxDecoration(
-                              color: Colors.grey,
+
+                              color: Colors.blueGrey.withOpacity(0.5),
                               border: Border.all(color: Colors.black),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                             margin: EdgeInsets.all(4),
                             child: ListTile(
-                              contentPadding: EdgeInsets.all(4),
-                              title: Text(places[index]),
+                              contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                              title: Text(places[index], style: TextStyle(color: Colors.white),),
                               trailing: IconButton(
                                 onPressed: () {},
-                                icon: Icon(Icons.cancel_outlined),
+                                icon: Icon(Icons.cancel_outlined, color: Colors.white54,),
                               ),
                             ),
                           );
@@ -190,7 +194,7 @@ class _WSearchBarState extends State<WSearchBar> {
                   child: Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.grey,
+                      color: Colors.white54,
                     ),
                     child: IconButton(
                       onPressed: () {

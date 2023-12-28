@@ -18,7 +18,7 @@ class TopSection extends StatelessWidget {
             children: <Widget>[
               FancyBar(
                 height: 46,
-                margin: EdgeInsets.only(left: 20, top: 40),
+                margin: EdgeInsets.only(left: 20, top: 48),
                 child: Icon(Icons.menu, color: Colors.white, size: 20),
               )
             ],
@@ -30,7 +30,7 @@ class TopSection extends StatelessWidget {
               children: <Widget>[
                 FancyBar(
                   height: 46 * 3.0,
-                  margin: const EdgeInsets.only(right: 20, top: 40),
+                  margin: const EdgeInsets.only(right: 20, top: 48),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
