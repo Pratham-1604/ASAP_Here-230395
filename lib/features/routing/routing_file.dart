@@ -152,7 +152,7 @@ class RoutingExample {
         route = routeList!.first;
 
         // fuel test
-        print('mileage is $mileage');
+        // print('mileage is $mileage');
         int a = fuel_based_consumption(
             routeList,
             //  16

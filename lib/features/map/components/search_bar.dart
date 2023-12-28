@@ -52,7 +52,7 @@ class _WSearchBarState extends State<WSearchBar> {
           }
         }),
         if (places.isNotEmpty && routeDet.isEmpty)
-          const CircularProgressIndicator(),
+          const Padding(padding: EdgeInsets.all(16)),
         if (places.isNotEmpty && routeDet.isNotEmpty)
           Container(
             color: Colors.blueGrey.withAlpha(25),
