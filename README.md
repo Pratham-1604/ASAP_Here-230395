@@ -4,7 +4,7 @@ Welcome to Pravaas Mitra! Your ultimate travel assistant for discovering new pla
 
 ## User Flow Diagram
 
-<img src="https://github.com/Pratham-1604/ASAP_Here-230395/blob/master/assets/img4.jpg" width="30%" height="30%">
+<img src="https://github.com/Pratham-1604/ASAP_Here-230395/blob/master/assets/img4.jpg" width="60%" height="60%">
 
 ## Features
 1) Elegant Map Interface : Pravaas Mitra offers you an elegant map interface made purely using the HERE SDK, for convenient navigation.
