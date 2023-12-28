@@ -4,9 +4,10 @@ Welcome to Pravaas Mitra! Your ultimate travel assistant for discovering new pla
 
 ## User Flow Diagram
 
-<img src="https://github.com/Pratham-1604/ASAP_Here-230395/blob/master/assets/img4.jpg" width="60%" height="60%">
+<img src="https://github.com/Pratham-1604/ASAP_Here-230395/blob/master/assets/img4.jpg" width="80%" height="80%">
 
 ## Features
+
 1) Elegant Map Interface : Pravaas Mitra offers you an elegant map interface made purely using the HERE SDK, for convenient navigation.
 2) Monitor Real Time Traffic Data : Users can see live traffic data on the app's map interface, along with the congestion and jam factor.
 3) Dynamic Route Recommendations : The app offers intelligent route recommendations to users based on the least time required and congestion control.
@@ -30,12 +31,14 @@ Welcome to Pravaas Mitra! Your ultimate travel assistant for discovering new pla
 
 https://github.com/Pratham-1604/ASAP_Here-230395/assets/86979829/e902911e-ad3a-45ec-b3a4-deeb4d861c83
 
+### 5. Live Demo - Guided Navigation
 
+https://github.com/Pratham-1604/ASAP_Here-230395/assets/86979829/a2950c91-73e1-4c2f-b160-f96f883926e5
 
-## Tools Used
+## Tool Used
 [HERE SDK For Flutter - Navigate Edition](https://www.here.com/docs/bundle/sdk-for-flutter-navigate-api-reference/page/index.html)
 
-## How to run app:
+## How To Run App
 Refer file how_to_run_app for detailed instructions on how to run the server and the app.
  
 ## Future Scope
