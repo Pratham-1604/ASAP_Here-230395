@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:here_sdk/routing.dart';
 import 'package:here_sdk/routing.dart' as here;
 
@@ -10,10 +11,12 @@ int fuel_based_consumption(List<here.Route>? routeList, num mileage) {
     num score = formula(
       a.lengthInMeters,
       mileage,
-      a.trafficDelay,
-      double.parse(a.duration.toString()),
+      double.parse(a.trafficDelay.inSeconds.toString()),
+      // double.parse(a.duration.toString()),
+      double.parse(a.duration.inSeconds.toString()),
       jamV,
     );
+    debugPrint(score.toString());
 
     if (score < best_score) {
       best_score = score;

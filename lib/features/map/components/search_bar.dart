@@ -59,24 +59,27 @@ class _WSearchBarState extends State<WSearchBar> {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: ListTile(
-                title: Consumer(
-                  builder: (context,ref, child) {
-                    final state = ref.watch(mapProvider);
-                    if(state.isRouting){
-                      double speed = 0;
-                      final random = Random();
-                      int randomValue = random.nextInt(2);
-                      if (randomValue ==0) {
-                        speed = state.drivingSpeed - state.speedAccuracy;
-                      }
-                      else{
-                        speed = state.drivingSpeed + state.speedAccuracy;
-                      }
-                      return Text("${routeDet["total_time"]} | ${speed.toStringAsFixed(2)} m/s", style: TextStyle(color: Colors.white),);
+                title: Consumer(builder: (context, ref, child) {
+                  final state = ref.watch(mapProvider);
+                  if (state.isRouting) {
+                    double speed = 0;
+                    final random = Random();
+                    int randomValue = random.nextInt(2);
+                    if (randomValue == 0) {
+                      speed = state.drivingSpeed - state.speedAccuracy;
+                    } else {
+                      speed = state.drivingSpeed + state.speedAccuracy;
                     }
-                    return Text(routeDet["total_time"], style: TextStyle(color: Colors.white),);
+                    return Text(
+                      "${routeDet["total_time"]} | ${speed.toStringAsFixed(2)} m/s",
+                      style: TextStyle(color: Colors.white),
+                    );
                   }
-                ),
+                  return Text(
+                    routeDet["total_time"],
+                    style: TextStyle(color: Colors.white),
+                  );
+                }),
                 subtitle: Text(
                   "${routeDet["traffic"]} ,${routeDet["length"]}",
                   style: const TextStyle(color: Colors.white54),
@@ -129,18 +132,24 @@ class _WSearchBarState extends State<WSearchBar> {
                           debugPrint(places.length.toString());
                           return Container(
                             decoration: BoxDecoration(
-
                               color: Colors.blueGrey.withOpacity(0.5),
                               border: Border.all(color: Colors.black),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             margin: EdgeInsets.all(4),
                             child: ListTile(
-                              contentPadding: EdgeInsets.symmetric(horizontal: 8),
-                              title: Text(places[index], style: TextStyle(color: Colors.white),),
+                              contentPadding:
+                                  EdgeInsets.symmetric(horizontal: 8),
+                              title: Text(
+                                places[index],
+                                style: TextStyle(color: Colors.white),
+                              ),
                               trailing: IconButton(
                                 onPressed: () {},
-                                icon: Icon(Icons.cancel_outlined, color: Colors.white54,),
+                                icon: Icon(
+                                  Icons.cancel_outlined,
+                                  color: Colors.white54,
+                                ),
                               ),
                             ),
                           );
@@ -276,6 +285,51 @@ class _WSearchBarState extends State<WSearchBar> {
                               _routingExample!.addWaypoint(
                                   Waypoint(state.searchResult[index]['geo']));
                               mapController.routingExample = _routingExample;
+
+                              // ignore: use_build_context_synchronously
+                              await showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      
+                                      title:
+                                          const Text('Mileage based Routing'),
+                                      content: Column(
+                                        children: [
+                                          Text(
+                                              'Enter Mileage for your vehicle'),
+                                          TextField(
+                                            // controller: state.mileageController,
+                                            decoration: InputDecoration(
+                                              hintText: "Mileage",
+                                              hintStyle: TextStyle(
+                                                  color: Colors.white),
+                                              border: InputBorder.none,
+                                              contentPadding:
+                                                  EdgeInsets.only(left: 15.0),
+                                            ),
+                                            onChanged: (value) {
+                                              if (num.tryParse(value) != null) {
+                                                // state.mileage = num.parse(value);
+                                                _routingExample?.mileage =
+                                                    num.parse(value);
+                                                // print(_routingExample?.mileage);
+                                              }
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text('Done'),
+                                        ),
+                                      ],
+                                    );
+                                  });
+
                               await _routingExample!.addRoute();
                               setState(() {
                                 toAdd = false;

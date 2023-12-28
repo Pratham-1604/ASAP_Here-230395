@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:here_final/features/map/map_controller.dart';
+import 'package:here_final/features/routing/fuel_based_soln.dart';
 // import 'package:here_final/features/map/hcmap.dart';
 import 'package:here_final/navigation/positioning_controller.dart';
 import 'package:here_sdk/animation.dart';
@@ -24,18 +25,20 @@ class RoutingExample {
   List<Waypoint> waypoints = [];
   List<MapMarker> mapMarkers = [];
   Map? routeDetails;
+  num? mileage;
   // for refresh route
   here.Route? route;
-
+  here.Route? greenestRoute;
   final MapController? mapCh;
-  
+
   MapMatchedLocation? _lastMapMatchedLocation;
 
   RoutingExample(
     // ShowDialogFunction showDialogCallback,
     HereMapController hereMapController,
     MapController mapC,
-  ) : _hereMapController = hereMapController, mapCh=mapC {
+  )   : _hereMapController = hereMapController,
+        mapCh = mapC {
     double distanceToEarthInMeters = 10000;
     MapMeasure mapMeasureZoom = MapMeasure(
       MapMeasureKind.distance,
@@ -99,30 +102,32 @@ class RoutingExample {
   }
 
   void _startDynamicSearchForBetterRoutes(here.Route route) {
-  try {
-    // Note that the engine will be internally stopped, if it was started before.
-    // Therefore, it is not necessary to stop the engine before starting it again.
-    _dynamicRoutingEngine.start(
-        route,
-        // Notifies on traffic-optimized routes that are considered better than the current route.
-        DynamicRoutingListener((here.Route newRoute, int etaDifferenceInSeconds, int distanceDifferenceInMeters) {
-          print('DynamicRoutingEngine: Calculated a new route.');
-          print('DynamicRoutingEngine: etaDifferenceInSeconds: $etaDifferenceInSeconds.');
-          print('DynamicRoutingEngine: distanceDifferenceInMeters: $distanceDifferenceInMeters.');
+    try {
+      // Note that the engine will be internally stopped, if it was started before.
+      // Therefore, it is not necessary to stop the engine before starting it again.
+      _dynamicRoutingEngine.start(
+          route,
+          // Notifies on traffic-optimized routes that are considered better than the current route.
+          DynamicRoutingListener((here.Route newRoute,
+              int etaDifferenceInSeconds, int distanceDifferenceInMeters) {
+            print('DynamicRoutingEngine: Calculated a new route.');
+            print(
+                'DynamicRoutingEngine: etaDifferenceInSeconds: $etaDifferenceInSeconds.');
+            print(
+                'DynamicRoutingEngine: distanceDifferenceInMeters: $distanceDifferenceInMeters.');
 
-          // An implementation needs to decide when to switch to the new route based
-          // on above criteria.
-        }, (RoutingError routingError) {
-          final error = routingError.toString();
-          print('Error while dynamically searching for a better route: $error');
-        }));
-  } on DynamicRoutingEngineStartException {
-    throw Exception("Start of DynamicRoutingEngine failed. Is the RouteHandle missing?");
+            // An implementation needs to decide when to switch to the new route based
+            // on above criteria.
+          }, (RoutingError routingError) {
+            final error = routingError.toString();
+            print(
+                'Error while dynamically searching for a better route: $error');
+          }));
+    } on DynamicRoutingEngineStartException {
+      throw Exception(
+          "Start of DynamicRoutingEngine failed. Is the RouteHandle missing?");
+    }
   }
-}
-
-  
-
 
   Future<void> addRoute() async {
     CarOptions carOptions = CarOptions();
@@ -130,9 +135,9 @@ class RoutingExample {
     DynamicRoutingEngineOptions dynamicRoutingEngineOptions =
         DynamicRoutingEngineOptions();
 
-      dynamicRoutingEngineOptions.minTimeDifference = const Duration(seconds: 10);
+    dynamicRoutingEngineOptions.minTimeDifference = const Duration(seconds: 10);
 
-      dynamicRoutingEngineOptions.minTimeDifferencePercentage = 0.1;
+    dynamicRoutingEngineOptions.minTimeDifferencePercentage = 0.1;
 
     _dynamicRoutingEngine = DynamicRoutingEngine(dynamicRoutingEngineOptions);
 
@@ -145,8 +150,28 @@ class RoutingExample {
         // When error is null, then the list guaranteed to be not null.
         // here.Route route = routeList!.first;
         route = routeList!.first;
+
+        // fuel test
+        print('mileage is $mileage');
+        int a = fuel_based_consumption(
+            routeList,
+            //  16
+            mileage!);
+        greenestRoute = routeList[a];
+        debugPrint(routeList.length.toString());
+        debugPrint("A: $a");
+
+        if(greenestRoute == route){
+          debugPrint("Same route");
+        }
+        else{
+          debugPrint("Different route");
+        }
+        // fuel test ends
+
         showRouteDetails(route!);
         _showRouteOnMap(route!);
+        _showGreenRouteOnMap(greenestRoute!);
         // _logRouteSectionDetails(route);
         _logRouteViolations(route!);
         _logTollDetails(route!);
@@ -180,7 +205,8 @@ class RoutingExample {
     //   _notification = val;
     // }
 
-visualNavigator.routeProgressListener = RouteProgressListener((RouteProgress routeProgress) {
+    visualNavigator.routeProgressListener =
+        RouteProgressListener((RouteProgress routeProgress) {
       // Handle results from onRouteProgressUpdated():
       // List<SectionProgress> sectionProgressList = routeProgress.sectionProgress;
       // // sectionProgressList is guaranteed to be non-empty.
@@ -200,11 +226,11 @@ visualNavigator.routeProgressListener = RouteProgressListener((RouteProgress rou
       //   return;
       // }
 
-
       if (_lastMapMatchedLocation != null) {
         // Update the route based on the current location of the driver.
         // We periodically want to search for better traffic-optimized routes.
-        _dynamicRoutingEngine.updateCurrentLocation(_lastMapMatchedLocation!, routeProgress.sectionIndex);
+        _dynamicRoutingEngine.updateCurrentLocation(
+            _lastMapMatchedLocation!, routeProgress.sectionIndex);
       }
     });
 
@@ -228,7 +254,7 @@ visualNavigator.routeProgressListener = RouteProgressListener((RouteProgress rou
           currentNavigableLocation.originalLocation.speedInMetersPerSecond;
       var accuracy = currentNavigableLocation
           .originalLocation.speedAccuracyInMetersPerSecond;
-      mapCh?.updateSpeeds(speed!, accuracy!); 
+      mapCh?.updateSpeeds(speed!, accuracy!);
       print("Driving speed (m/s): $speed plus/minus an accuracy of: $accuracy");
     });
 
@@ -368,7 +394,7 @@ visualNavigator.routeProgressListener = RouteProgressListener((RouteProgress rou
     String routeDetails =
         'Travel Time: ${_formatTime(estimatedTravelTimeInSeconds)}, Traffic Delay: ${_formatTime(estimatedTrafficDelayInSeconds)}, Length: ${_formatLength(lengthInMeters)}';
 
-    routeDet =  {
+    routeDet = {
       "total_time": _formatTime(estimatedTravelTimeInSeconds),
       "traffic": _formatTime(estimatedTrafficDelayInSeconds),
       "length": _formatLength(lengthInMeters),
@@ -396,6 +422,44 @@ visualNavigator.routeProgressListener = RouteProgressListener((RouteProgress rou
     double widthInPixels = 20;
     // Color polylineColor = Color.fromARGB(244, 252, 252, 252);
     Color polylineColor = Colors.white.withOpacity(0.5);
+    MapPolyline routeMapPolyline;
+    try {
+      routeMapPolyline = MapPolyline.withRepresentation(
+          routeGeoPolyline,
+          MapPolylineSolidRepresentation(
+              MapMeasureDependentRenderSize.withSingleSize(
+                  RenderSizeUnit.pixels, widthInPixels),
+              polylineColor,
+              LineCap.round));
+      _hereMapController.mapScene.addMapPolyline(routeMapPolyline);
+      _mapPolylines.add(routeMapPolyline);
+      _showAavatars(waypoints[0], true, false);
+      for (int i = 1; i < waypoints.length - 1; i++) {
+        _showAavatars(waypoints[i], false, false);
+      }
+      _showAavatars(waypoints[waypoints.length - 1], false, true);
+    } on MapPolylineRepresentationInstantiationException catch (e) {
+      print("MapPolylineRepresentation Exception:${e.error.name}");
+      return;
+    } on MapMeasureDependentRenderSizeInstantiationException catch (e) {
+      print("MapMeasureDependentRenderSize Exception:${e.error.name}");
+      return;
+    }
+
+    // Optionally, render traffic on route.
+    _showTrafficOnRoute(route);
+  }
+
+  _showGreenRouteOnMap(here.Route route) {
+    // Show route as polyline.
+    if (this.greenestRoute == this.route) {
+      // print("Same route");
+      return;
+    }
+    GeoPolyline routeGeoPolyline = greenestRoute?.geometry as GeoPolyline;
+    double widthInPixels = 20;
+    // Color polylineColor = Color.fromARGB(244, 252, 252, 252);
+    Color polylineColor = Colors.green;
     MapPolyline routeMapPolyline;
     try {
       routeMapPolyline = MapPolyline.withRepresentation(
