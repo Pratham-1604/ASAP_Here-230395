@@ -288,23 +288,31 @@ class _WSearchBarState extends State<WSearchBar> {
 
                               // ignore: use_build_context_synchronously
                               await showDialog(
+                                
                                   context: context,
                                   builder: (BuildContext context) {
                                     return AlertDialog(
-                                      
+                                      backgroundColor: Colors.blueGrey.withOpacity(0.6),
                                       title:
-                                          const Text('Mileage based Routing'),
+                                          const Text('Mileage based Routing', style: TextStyle(color: Colors.white),),
                                       content: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.stretch,
                                         children: [
                                           Text(
-                                              'Enter Mileage for your vehicle'),
+                                              'Enter Mileage for your vehicle', style: TextStyle(color: Colors.white),),
                                           TextField(
                                             // controller: state.mileageController,
+                                            style: const TextStyle(
+                                                color: Colors.white),
                                             decoration: InputDecoration(
+                                              
+                                              
                                               hintText: "Mileage",
                                               hintStyle: TextStyle(
                                                   color: Colors.white),
-                                              border: InputBorder.none,
+                                              // border: InputBorder.none,
                                               contentPadding:
                                                   EdgeInsets.only(left: 15.0),
                                             ),
@@ -321,10 +329,14 @@ class _WSearchBarState extends State<WSearchBar> {
                                       ),
                                       actions: <Widget>[
                                         TextButton(
+                                          
                                           onPressed: () {
                                             Navigator.of(context).pop();
                                           },
-                                          child: const Text('Done'),
+                                          style: TextButton.styleFrom(
+                                            backgroundColor: Colors.blueGrey.withOpacity(0.8),
+                                          ),
+                                          child: const Text('Done', style: TextStyle(color: Colors.white),),
                                         ),
                                       ],
                                     );
