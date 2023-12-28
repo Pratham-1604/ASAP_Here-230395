@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:here_final/features/map/map_controller.dart';
+// import 'package:here_final/features/map/hcmap.dart';
 import 'package:here_final/navigation/positioning_controller.dart';
 import 'package:here_sdk/animation.dart';
 import 'package:here_sdk/core.dart';
@@ -23,10 +25,12 @@ class RoutingExample {
   // for refresh route
   here.Route? route;
 
+  final MapController? mapCh;
   RoutingExample(
     // ShowDialogFunction showDialogCallback,
     HereMapController hereMapController,
-  ) : _hereMapController = hereMapController {
+    MapController mapC,
+  ) : _hereMapController = hereMapController, mapCh=mapC {
     double distanceToEarthInMeters = 10000;
     MapMeasure mapMeasureZoom = MapMeasure(
       MapMeasureKind.distance,
@@ -106,34 +110,61 @@ class RoutingExample {
     });
   }
 
-  // navigation
-
-  late VisualNavigator _visualNavigator;
+  late VisualNavigator visualNavigator;
 
   startGuidance(here.Route route) {
     try {
       // Without a route set, this starts tracking mode.
-      _visualNavigator = VisualNavigator();
+      visualNavigator = VisualNavigator();
     } on InstantiationException {
       throw Exception("Initialization of VisualNavigator failed.");
     }
 
     // This enables a navigation view including a rendered navigation arrow.
-    _visualNavigator!.startRendering(_hereMapController!);
+    visualNavigator!.startRendering(_hereMapController!);
 
     // Hook in one of the many listeners. Here we set up a listener to get instructions on the maneuvers to take while driving.
     // For more details, please check the "navigation_app" example and the Developer's Guide.
-    _visualNavigator!.maneuverNotificationListener =
+
+    // String _notification = "";
+
+    // void notification(String val) {
+    //   _notification = val;
+    // }
+
+
+
+    visualNavigator.maneuverNotificationListener =
         ManeuverNotificationListener((String maneuverText) {
-      print("ManeuverNotifications: $maneuverText");
+      mapCh?.updateNotification(maneuverText);
+      // print("ManeuverNotifications: $maneuverText");
+      // notification(maneuverText);
+    });
+
+    visualNavigator.navigableLocationListener =
+        NavigableLocationListener((NavigableLocation currentNavigableLocation) {
+      // Handle results from onNavigableLocationUpdated():
+      MapMatchedLocation? mapMatchedLocation =
+          currentNavigableLocation.mapMatchedLocation;
+      if (mapMatchedLocation == null) {
+        print('This new location could not be map-matched. Are you off-road?');
+        return;
+      }
+
+      var speed =
+          currentNavigableLocation.originalLocation.speedInMetersPerSecond;
+      var accuracy = currentNavigableLocation
+          .originalLocation.speedAccuracyInMetersPerSecond;
+      mapCh?.updateSpeeds(speed!, accuracy!); 
+      print("Driving speed (m/s): $speed plus/minus an accuracy of: $accuracy");
     });
 
     // Set a route to follow. This leaves tracking mode.
-    _visualNavigator!.route = route;
+    visualNavigator!.route = route;
 
     // VisualNavigator acts as LocationListener to receive location updates directly from a location provider.
     // Any progress along the route is a result of getting a new location fed into the VisualNavigator.
-    _setupLocationSource(_visualNavigator!, route);
+    _setupLocationSource(visualNavigator!, route);
   }
 
   late LocationSimulator _locationSimulator;
@@ -143,7 +174,7 @@ class RoutingExample {
       // Provides fake GPS signals based on the route geometry.
       _herePositioningProvider = HEREPositioningProvider();
       _herePositioningProvider?.startLocating(
-          _visualNavigator, LocationAccuracy.navigation);
+          visualNavigator, LocationAccuracy.navigation);
     } on InstantiationException {
       throw Exception("Initialization of LocationSimulator failed.");
     }
@@ -153,11 +184,13 @@ class RoutingExample {
   }
 
   stopLocationSimulator() {
-    if (_visualNavigator != null) {
+    if (visualNavigator != null) {
       _herePositioningProvider?.stop();
-      _visualNavigator.stopRendering();
+      visualNavigator.stopRendering();
     }
   }
+
+  // add streams to get data related to progress of navigation
 
   // navigation ends
 

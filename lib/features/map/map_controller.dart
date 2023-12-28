@@ -327,4 +327,25 @@ class MapController extends ChangeNotifier {
   }
 
   // map controls only -ends
+
+  // navigation stuff
+
+  
+  String manuverNotify = "";
+  
+  void updateNotification(String newnotify) {
+    manuverNotify = newnotify;
+    notifyListeners();
+  }
+
+  double drivingSpeed = 0;
+  double speedAccuracy = 0;
+
+  void updateSpeeds(double speed, double accuracy) {
+    drivingSpeed = speed;
+    speedAccuracy = accuracy;
+    notifyListeners();
+  }
+
 }
+
